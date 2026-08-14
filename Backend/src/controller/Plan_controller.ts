@@ -121,3 +121,37 @@ export const deletePlan = async ( req : Request , res : Response ) =>
         .json({message : " Successfully deleted Plan"})
 }
 
+export const updatePlan = async ( req : Request , res : Response ) =>
+{
+    const { pname , duration , price} = req.body;
+    const id = Number(req.params.id);
+
+    if(Number.isNaN(id))
+    {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message : "Invalid Id"})
+    };
+
+    const data = await fromPromise
+    (
+        db
+            .update(plan)
+            .set({ pname , duration , price})
+            .where(eq (plan.id , id))
+            .returning(),
+            () => new Error("Database Error")
+    )
+
+    if(data.isErr())
+    {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message : data.error.message })
+    };
+
+    return res
+        .status(StatusCode.OK)
+        .json({ message : "Updated Plan Successfully" , data : data.value })
+}
+
