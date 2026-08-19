@@ -15,11 +15,13 @@ export const authenticate = (req :any , res : any , next : any) =>
 
         try
         {
+            console.log("SECRET AT VERIFY:", JSON.stringify(process.env.JWT_SECRET));
             const decoded = jwt.verify(token, process.env.JWT_SECRET!);
             req.user = decoded;
             next();
         }catch(error)
         {
+            console.log("VERIFY ERROR:", error);
             return res.status(401).json({
                 message : "Invalid or Expired Token"
             });

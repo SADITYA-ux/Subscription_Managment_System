@@ -1,0 +1,1 @@
+ALTER TABLE "subscription" ADD COLUMN "start_Date" timestamp NOT NULL;

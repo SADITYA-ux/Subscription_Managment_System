@@ -6,6 +6,6 @@ export const planRouter : Router = Router();
 
 planRouter.get("/", getPlan);
 planRouter.get("/:id", getPlanById);
-planRouter.put("/:id", authenticate , authorize(["Admin"]), createPlan);
+planRouter.post("/", authenticate , authorize(["Admin"]), createPlan);
 planRouter.put("/:id", authenticate , authorize(["Admin"]), updatePlan);
-planRouter.put("/:id", authenticate , authorize(["Admin"]), deletePlan);
+planRouter.delete("/:id", authenticate , authorize(["Admin"]), deletePlan);

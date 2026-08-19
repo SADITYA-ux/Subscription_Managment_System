@@ -50,6 +50,8 @@ export const userLogin = async ( req : Request , res : Response) =>
             .json({ message : "Password not matched" })
     };
 
+    
+console.log("SECRET AT VERIFY:", process.env.JWT_SECRET);
     const token = jwt.sign(
         {
             id : value.id,
@@ -60,7 +62,9 @@ export const userLogin = async ( req : Request , res : Response) =>
         {
             expiresIn : "1h",
         }
+        
     );
+    
 
     return res 
     .status(StatusCode.OK)
