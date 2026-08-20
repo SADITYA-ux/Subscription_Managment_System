@@ -5,6 +5,19 @@ import { plan, subscription } from "../db/schema.js";
 import { StatusCode } from "../Constraints/status-codes.js";
 import { eq } from "drizzle-orm";
 
+function computeStatus( sub : typeof subscription.$inferSelect)
+{
+    const now = new Date();
+    const end = new Date(sub.endDate);
+
+    if(sub.status !== "Rejected" && end < now)
+    {
+        return { ...sub , status : "Expired" as const }
+    }
+    
+    return sub
+}
+
 export const createSubs = async ( req : Request , res : Response ) =>
 {
     const { clientid , planid , startDate} = req.body;
@@ -93,7 +106,7 @@ export const getAllSubs = async( req : Request , res : Response ) =>
 
     return res  
         .status(StatusCode.OK)
-        .json({ message : "All Subscription Found "})
+        .json({ message : "All Subscription Found " , data : data.value.map(computeStatus)})
 };
 
 export const getSubsById = async ( req : Request , res : Response ) =>
@@ -130,9 +143,19 @@ export const getSubsById = async ( req : Request , res : Response ) =>
             .json({ message : "No Subscription found"})
     };
 
+    const [found] = data.value;
+
+    if(!found)
+    {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message : "Not FOund"})
+    }
+
+
     return res
         .status(StatusCode.OK)
-        .json({ message : "Found" , data : data.value[0] })
+        .json({ message : "Found" , data : computeStatus(found) })
 };
 
 export const updateSubs = async ( req : Request , res : Response ) =>
@@ -244,7 +267,7 @@ export const getSubsByClient = async (req: Request, res: Response) => {
 
     return res
         .status(StatusCode.OK)
-        .json({ message: "Subscriptions found", data: data.value });
+        .json({ message: "Subscriptions found", data: data.value.map(computeStatus) });
 };
 
 export const deleteSubs = async (req: Request, res: Response) => {
