@@ -12,7 +12,8 @@ export const getPlan = async( req : Request , res : Response ) =>
     (
         db
         .select()
-        .from(plan),
+        .from(plan)
+        .where(eq(plan.isActive , true)),
         () => new Error("Database Error")
     )    
 
@@ -164,3 +165,50 @@ export const updatePlan = async ( req : Request , res : Response ) =>
         .json({ message : "Updated Plan Successfully" , data : data.value })
 }
 
+export const getInactivePlans = async (req: Request, res: Response) => {
+    const data = await fromPromise(
+        db.select().from(plan).where(eq(plan.isActive, false)),
+        () => new Error("Database Error")
+    );
+
+    if (data.isErr()) {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message: data.error.message });
+    }
+
+    return res
+        .status(StatusCode.OK)
+        .json({ message: "Inactive plans found", data: data.value });
+};
+
+export const restorePlan = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+
+    if (Number.isNaN(id)) {
+        return res
+            .status(StatusCode.BAD_REQUEST)
+            .json({ message: "Invalid id" });
+    }
+
+    const data = await fromPromise(
+        db.update(plan).set({ isActive: true }).where(eq(plan.id, id)).returning(),
+        () => new Error("Database Error")
+    );
+
+    if (data.isErr()) {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message: data.error.message });
+    }
+
+    if (data.value.length === 0) {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message: "No plan found" });
+    }
+
+    return res
+        .status(StatusCode.OK)
+        .json({ message: "Plan restored successfully", data: data.value[0] });
+};

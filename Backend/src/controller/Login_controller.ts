@@ -11,7 +11,7 @@ import e from "express";
 
 export const userLogin = async ( req : Request , res : Response) =>
 {
-    const { password , email , } = req.body;
+    const { password , email  } = req.body;
     
     const data = await fromPromise
     (
@@ -19,7 +19,7 @@ export const userLogin = async ( req : Request , res : Response) =>
         .select()
         .from(users)
         .where(eq ( users.email , email))
-        .limit(1),
+        .then((res)=>res[0]),
         () => new Error("Database Error")
     );
 
@@ -30,7 +30,7 @@ export const userLogin = async ( req : Request , res : Response) =>
             .json({ message : data.error.message })
     };
 
-    const [value] = data.value;
+    const value = data.value;
     if(!value)
     {
         return res  

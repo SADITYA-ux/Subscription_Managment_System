@@ -19,3 +19,11 @@ export function updatePlan(id: number, data: { pname?: string; duration?: number
 export function deletePlan(id: number) {
     return apiRequest(`/plans/${id}`, "DELETE");
 }
+
+export function getInactivePlans() {
+    return apiRequest("/plans/inactive", "GET");
+}
+
+export function restorePlan(id: number) {
+    return apiRequest(`/plans/${id}/restore`, "PUT");
+}

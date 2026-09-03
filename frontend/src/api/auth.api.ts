@@ -2,7 +2,7 @@ import apiRequest from "./apiClient";
 
 export function loginUser( email : string , password : string )
 {
-    return apiRequest("auth/login" , "POST" , { email , password });
+    return apiRequest("/auth/login" , "POST" , { email  , password  });
 }
 
 export function registerUser( data : {
@@ -14,5 +14,5 @@ export function registerUser( data : {
     age : Number
 })
 {
-    return apiRequest("auth/register" , "POST" , data);
+    return apiRequest("/auth/register" , "POST" , data);
 }

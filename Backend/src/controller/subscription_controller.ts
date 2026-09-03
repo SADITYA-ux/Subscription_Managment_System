@@ -4,6 +4,7 @@ import { db } from "../db/index.js";
 import { plan, subscription } from "../db/schema.js";
 import { StatusCode } from "../Constraints/status-codes.js";
 import { eq } from "drizzle-orm";
+import { format } from "path";
 
 function computeStatus( sub : typeof subscription.$inferSelect)
 {
@@ -86,7 +87,8 @@ export const getAllSubs = async( req : Request , res : Response ) =>
     (
         db
         .select()
-        .from(subscription),
+        .from(subscription)
+        .where(eq(subscription.isActive, true)),
         () => new Error("Database Error")
     );
 
@@ -96,13 +98,6 @@ export const getAllSubs = async( req : Request , res : Response ) =>
             .status(StatusCode.INTERNAL_SERVER_ERROR)
             .json({ message : data.error.message })
     }
-
-    if(data.value.length === 0)
-    {
-        return res  
-            .status(StatusCode.NOT_FOUND)
-            .json({ message : "No Subscription found"})
-    };
 
     return res  
         .status(StatusCode.OK)
@@ -116,7 +111,7 @@ export const getSubsById = async ( req : Request , res : Response ) =>
     if(Number.isNaN(id))
     {
         return res  
-            .status(StatusCode.BAD_GATEWAY)
+            .status(StatusCode.BAD_REQUEST)
             .json({ message : "Invallid id"})
     };
 
@@ -334,4 +329,128 @@ export const editSubs = async (req: Request, res: Response) => {
     return res
         .status(StatusCode.OK)
         .json({ message: "Subscription edited successfully", data: data.value[0] });
+};
+
+export const inactiveSubs = async (req : Request , res : Response) =>
+{
+    const data = await fromPromise
+    (
+        db
+            .select()
+            .from(subscription)
+            .where(eq(subscription.isActive , false)),
+            () => new Error("Database Error")
+    )
+
+    if(data.isErr())
+        {
+            return res
+                .status(StatusCode.INTERNAL_SERVER_ERROR)
+                .json({ message : data.error.message })
+        }
+        
+    return res
+        .status(StatusCode.OK)
+        .json({message : "Found inactive subscription" , data : data.value })
+}
+
+export const restoreSubs = async (req : Request , res : Response) =>
+{
+    const id = Number(req.params.id);
+
+    if(Number.isNaN(id))
+    {
+        return res
+            .status(StatusCode.BAD_REQUEST)
+            .json({message : "no id found "})
+    }
+
+    const data = await fromPromise
+    (
+        db
+        .update(subscription)
+        .set({isActive : true})
+        .where(eq(subscription.id , id)),
+        () => new Error("Database Error")
+    )
+
+    if(data.isErr())
+    {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message : data.error.message})
+    };
+
+    return res
+        .status(StatusCode.OK)
+        .json({ message : "succesfully activated the sub"})
+}
+
+export const extendSubs = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+
+    if (Number.isNaN(id)) {
+        return res
+            .status(StatusCode.BAD_REQUEST)
+            .json({ message: "Invalid id" });
+    }
+
+    const subResult = await fromPromise(
+        db.select().from(subscription).where(eq(subscription.id, id)).limit(1),
+        () => new Error("Database Error")
+    );
+
+    if (subResult.isErr()) {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message: subResult.error.message });
+    }
+
+    const [existingSub] = subResult.value;
+
+    if (!existingSub) {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message: "Subscription not found" });
+    }
+
+    const planResult = await fromPromise(
+        db.select().from(plan).where(eq(plan.id, existingSub.planid)).limit(1),
+        () => new Error("Database Error")
+    );
+
+    if (planResult.isErr()) {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message: planResult.error.message });
+    }
+
+    const [foundPlan] = planResult.value;
+
+    if (!foundPlan) {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message: "Plan not found" });
+    }
+
+    const newEndDate = new Date(existingSub.endDate);
+    newEndDate.setDate(newEndDate.getDate() + foundPlan.duration);
+
+    const data = await fromPromise(
+        db.update(subscription)
+            .set({ endDate: newEndDate, status: "Active" })
+            .where(eq(subscription.id, id))
+            .returning(),
+        () => new Error("Database Error")
+    );
+
+    if (data.isErr()) {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message: data.error.message });
+    }
+
+    return res
+        .status(StatusCode.OK)
+        .json({ message: "Subscription extended successfully", data: data.value[0] });
 };

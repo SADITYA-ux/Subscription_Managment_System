@@ -27,3 +27,15 @@ export function editSubscription(id: number, data: { startDate?: string; endDate
 export function deleteSubscription(id: number) {
     return apiRequest(`/subscriptions/${id}`, "DELETE");
 }
+
+export function extendSubscription(id: number) {
+    return apiRequest(`/subscriptions/${id}/extend`, "PUT");
+}
+
+export function getInactiveSubscriptions() {
+    return apiRequest("/subscriptions/inactive", "GET");
+}
+
+export function restoreSubscription(id: number) {
+    return apiRequest(`/subscriptions/${id}/restore`, "PUT");
+}

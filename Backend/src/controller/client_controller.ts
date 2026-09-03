@@ -1,5 +1,5 @@
 import type { Request , Response } from "express"
-import { fromPromise } from "neverthrow"
+import { Err, fromPromise } from "neverthrow"
 import { db } from "../db/index.js"
 import { client } from "../db/schema.js"
 import { StatusCode } from "../Constraints/status-codes.js"
@@ -13,7 +13,8 @@ export const getAllClients = async ( req : Request , res : Response ) =>
     (
         db
         .select()
-        .from(client),
+        .from(client)
+        .where(eq(client.isActive , true)),
         () => new Error("Database Error")
     )
 
@@ -141,4 +142,67 @@ export const updateClient = async( req : Request , res : Response) =>
     return res
         .status(StatusCode.OK)
         .json({ message : "Client Updated Successfully" , data : data.value[0] })
+}
+
+export const getInactiveClient = async( req : Request , res : Response) =>
+{
+    const data = await fromPromise
+    (
+        db
+            .select()
+            .from(client)
+            .where(eq(client.isActive , false)),
+            () => new Error("Database Error")
+    )
+
+    if(data.isErr())
+    {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message : data.error.message })
+    };
+
+    return res
+        .status(StatusCode.OK)
+        .json({ message : "Inactive CLients found" , data : data.value })
+};
+
+export const restoreClient = async ( req : Request , res : Response) =>
+{
+    const id = Number(req.params.id)
+
+    if(Number.isNaN(id))
+    {
+        return res
+            .status(StatusCode.BAD_REQUEST)
+            .json({ message : "Invalid id"})
+    }
+
+    const data = await fromPromise
+    (
+        db
+            .update(client)
+            .set({ isActive : true })
+            .where(eq(client.id , id))
+            .returning(),
+        () => new Error("Database Error")
+    )
+
+    if(data.isErr())
+    {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message : data.error.message })
+    };
+
+    if(data.value.length === 0)
+    {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message : "No Client found" });
+    }
+
+    return res
+        .status(StatusCode.OK)
+        .json({ message : "Client restored successfully" , data : data.value[0] })
 }

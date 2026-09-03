@@ -15,3 +15,13 @@ export function updateClient(id: number, data: { name?: string; address?: string
 export function deleteClient(id: number) {
     return apiRequest(`/clients/${id}`, "DELETE");
 }
+
+export function getInactiveClient()
+{
+    return apiRequest(`/clients/inactive`,"GET");
+}
+
+export function restoreClient(id : number)
+{
+    return apiRequest(`/clients/restore/${id}` , "PUT")
+}

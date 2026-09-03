@@ -37,7 +37,7 @@ export const authorize = (allowedRoles : string[] ) =>
         // deny user req if he/she/it is not authorized
         if(!allowedRoles.includes(userRole))
         {
-            return res.status(403).json({
+            return res.status(401).json({
                 message : "Cannot Access"
             });
         }

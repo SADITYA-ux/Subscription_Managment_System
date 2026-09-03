@@ -16,7 +16,7 @@ async function apiRequest ( path : string , method : string , body ?: object )
     const response = await fetch(url , {method , headers , body : body ? JSON.stringify(body) : undefined});
     const data = await response.json();
     
-    if(response.ok)
+    if(!response.ok)
     {
         return( data.message || "Something Wenr Wrong")
     }
