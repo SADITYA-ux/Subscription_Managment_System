@@ -7,6 +7,7 @@ type User = {
 };
 
 type AuthContextType = {
+    role: string;
     user: User | null;
     login: (token: string, user: User) => void;
     logout: () => void;
@@ -42,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, initialized }}>
+        <AuthContext.Provider value={{ role: user?.role || "", user, login, logout, initialized }}>
             {children}
         </AuthContext.Provider>
     );

@@ -11,6 +11,8 @@ import ClientLayout from "./components/layout/ClientLayout";
 import AdminClient from "./pages/admin/AdminClients";
 import AdminSubscriptions from "./pages/admin/AdminSubscription";
 import AdminPayments from "./pages/admin/AdminPayments";
+import AdminStaff from "./pages/admin/AdminStaff";
+import Plans from "./pages/Plans";
 
 export default function App()
 {
@@ -27,6 +29,7 @@ export default function App()
       {!hideNavbar && <Navbar/>}
         <Routes>
             <Route path ="/" element = {<Home/>} />
+            <Route path ="/plans" element = {<Plans/>} />
             <Route path= "/login" element = {<Login/>} />
             <Route path = "/register" element = {<SignIn/>}/>
 
@@ -36,14 +39,17 @@ export default function App()
                 <Route path = "/admin/clients" element = {<AdminClient/>} />
                 <Route path = "/admin/subscriptions" element = {<AdminSubscriptions/>} />
                 <Route path = "/admin/payments" element = { <AdminPayments/>}/>
+                <Route path = "/admin/staff" element = { <AdminStaff/>}/>
               </Route>
             </Route> 
 
-            <Route element = { <RoleRoute allowedRoles = {["Staff"]} />} >
-              <Route element = {<StaffLayout/>}>
-
+            <Route element={<RoleRoute allowedRoles={["Staff"]} />}>
+                  <Route element={<StaffLayout />}>
+                      <Route path="/staff/clients" element={<AdminClient />} />
+                      <Route path="/staff/subscriptions" element={<AdminSubscriptions />} />
+                      <Route path="/staff/payments" element={<AdminPayments />} />
+                  </Route>
               </Route>
-            </Route>
 
             <Route element = { <RoleRoute allowedRoles = {["Client"]} />} >
               <Route element = {<ClientLayout/>}>

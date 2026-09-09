@@ -8,10 +8,14 @@ export function getAllStaff() {
     return apiRequest("/staff", "GET");
 }
 
+export function updateStaff(id: number, data: { name?: string; address?: string; phone?: string; age?: number }) {
+    return apiRequest(`/staff/${id}`, "PUT", data);
+}
+
 export function getStaffById(id: number) {
     return apiRequest(`/staff/${id}`, "GET");
 }
 
 export function deactivateStaff(id: number) {
-    return apiRequest(`/staff/${id}`, "DELETE");
+    return apiRequest(`/staff/${id}`, "PUT");
 }
