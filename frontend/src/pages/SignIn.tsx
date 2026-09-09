@@ -3,89 +3,94 @@ import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api/auth.api";
 
 export default function Register() {
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-        name: "",
-        address: "",
-        number: "",
-        age: "",
-    });
+const [formData, setFormData] = useState({
+email: "",
+password: "",
+name: "",
+address: "",
+number: "",
+age: "",
+});
 
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
+const [error, setError] = useState("");
+const navigate = useNavigate();
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+}
+
+async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+
+    try {
+        await registerUser({
+            ...formData,
+            number: Number(formData.number),
+            age: Number(formData.age),
+        });
+
+        navigate("/login");
+    } catch (err) {
+        setError(
+            err instanceof Error
+                ? err.message
+                : "Registration failed"
+        );
     }
+}
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        setError("");
+return (
+    <div className="min-h-screen bg-[#f8f8f6] px-4 py-10 sm:px-6">
+        <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-lg items-center">
+            <div className="w-full">
+                <div className="mb-7 text-center">
+                    <Link
+                        to="/"
+                        className="inline-flex items-center gap-2 text-2xl font-black tracking-tight text-black"
+                    >
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-400 text-sm font-black text-black shadow-sm">
+                            M
+                        </span>
 
-        try {
-            await registerUser({
-                ...formData,
-                number: Number(formData.number),
-                age: Number(formData.age),
-            });
+                        Member
+                        <span className="text-yellow-500">
+                            Hub
+                        </span>
+                    </Link>
 
-            navigate("/login");
-        } catch (err) {
-            setError(
-                err instanceof Error
-                    ? err.message
-                    : "Registration failed"
-            );
-        }
-    }
-
-    return (
-        <div className="min-h-screen bg-[#F5F6F8] px-4 py-10">
-            <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-lg items-center">
-                <div className="w-full">
-
-                    <div className="mb-7 text-center">
-                        <Link
-                            to="/"
-                            className="inline-flex items-center gap-2 text-2xl font-bold tracking-tight text-[#172033]"
-                        >
-                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#172554] text-sm font-bold text-white shadow-sm">
-                                M
-                            </span>
-
-                            Member
-                            <span className="text-[#8F3047]">
-                                Hub
-                            </span>
-                        </Link>
-
-                        <h1 className="mt-7 text-3xl font-bold tracking-tight text-[#172033]">
-                            Create your account
-                        </h1>
-
-                        <p className="mt-2 text-sm text-[#667085]">
-                            Join MemberHub and manage your subscription
-                        </p>
+                    <div className="mt-7 inline-flex rounded-full bg-yellow-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-black">
+                        Get Started
                     </div>
 
-                    <form
-                        onSubmit={handleSubmit}
-                        className="rounded-2xl border border-[#E1E5EB] bg-white p-7 shadow-[0_8px_30px_rgba(23,32,51,0.06)] sm:p-8"
-                    >
+                    <h1 className="mt-4 text-3xl font-black tracking-tight text-black">
+                        Create your account
+                    </h1>
+
+                    <p className="mt-2 text-sm text-slate-500">
+                        Join MemberHub and manage your subscription
+                    </p>
+                </div>
+
+                <form
+                    onSubmit={handleSubmit}
+                    className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_35px_rgba(0,0,0,0.06)]"
+                >
+                    <div className="h-1.5 w-full bg-yellow-400" />
+
+                    <div className="p-7 sm:p-8">
                         {error && (
-                            <div className="mb-6 rounded-xl border border-[#E8CDD4] bg-[#F4E7EA] px-4 py-3 text-sm text-[#8F3047]">
+                            <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
                                 {error}
                             </div>
                         )}
 
                         <div className="space-y-5">
-
                             <div>
                                 <label
                                     htmlFor="name"
-                                    className="mb-2 block text-sm font-medium text-[#344054]"
+                                    className="mb-2 block text-sm font-bold text-black"
                                 >
                                     Full name
                                 </label>
@@ -97,14 +102,14 @@ export default function Register() {
                                     value={formData.name}
                                     onChange={handleChange}
                                     required
-                                    className="w-full rounded-xl border border-[#D5DAE1] bg-[#F8F9FB] px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98A2B3] hover:border-[#B8C0CC] focus:border-[#284B8F] focus:bg-white focus:ring-4 focus:ring-[#284B8F]/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-black outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100"
                                 />
                             </div>
 
                             <div>
                                 <label
                                     htmlFor="email"
-                                    className="mb-2 block text-sm font-medium text-[#344054]"
+                                    className="mb-2 block text-sm font-bold text-black"
                                 >
                                     Email address
                                 </label>
@@ -118,14 +123,14 @@ export default function Register() {
                                     onChange={handleChange}
                                     required
                                     autoComplete="email"
-                                    className="w-full rounded-xl border border-[#D5DAE1] bg-[#F8F9FB] px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98A2B3] hover:border-[#B8C0CC] focus:border-[#284B8F] focus:bg-white focus:ring-4 focus:ring-[#284B8F]/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-black outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100"
                                 />
                             </div>
 
                             <div>
                                 <label
                                     htmlFor="password"
-                                    className="mb-2 block text-sm font-medium text-[#344054]"
+                                    className="mb-2 block text-sm font-bold text-black"
                                 >
                                     Password
                                 </label>
@@ -139,14 +144,14 @@ export default function Register() {
                                     onChange={handleChange}
                                     required
                                     autoComplete="new-password"
-                                    className="w-full rounded-xl border border-[#D5DAE1] bg-[#F8F9FB] px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98A2B3] hover:border-[#B8C0CC] focus:border-[#284B8F] focus:bg-white focus:ring-4 focus:ring-[#284B8F]/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-black outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100"
                                 />
                             </div>
 
                             <div>
                                 <label
                                     htmlFor="address"
-                                    className="mb-2 block text-sm font-medium text-[#344054]"
+                                    className="mb-2 block text-sm font-bold text-black"
                                 >
                                     Address
                                 </label>
@@ -158,16 +163,15 @@ export default function Register() {
                                     value={formData.address}
                                     onChange={handleChange}
                                     required
-                                    className="w-full rounded-xl border border-[#D5DAE1] bg-[#F8F9FB] px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98A2B3] hover:border-[#B8C0CC] focus:border-[#284B8F] focus:bg-white focus:ring-4 focus:ring-[#284B8F]/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-black outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100"
                                 />
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-
                                 <div>
                                     <label
                                         htmlFor="number"
-                                        className="mb-2 block text-sm font-medium text-[#344054]"
+                                        className="mb-2 block text-sm font-bold text-black"
                                     >
                                         Phone number
                                     </label>
@@ -180,14 +184,14 @@ export default function Register() {
                                         value={formData.number}
                                         onChange={handleChange}
                                         required
-                                        className="w-full rounded-xl border border-[#D5DAE1] bg-[#F8F9FB] px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98A2B3] hover:border-[#B8C0CC] focus:border-[#284B8F] focus:bg-white focus:ring-4 focus:ring-[#284B8F]/10"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-black outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100"
                                     />
                                 </div>
 
                                 <div>
                                     <label
                                         htmlFor="age"
-                                        className="mb-2 block text-sm font-medium text-[#344054]"
+                                        className="mb-2 block text-sm font-bold text-black"
                                     >
                                         Age
                                     </label>
@@ -201,38 +205,37 @@ export default function Register() {
                                         onChange={handleChange}
                                         required
                                         min="1"
-                                        className="w-full rounded-xl border border-[#D5DAE1] bg-[#F8F9FB] px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98A2B3] hover:border-[#B8C0CC] focus:border-[#284B8F] focus:bg-white focus:ring-4 focus:ring-[#284B8F]/10"
+                                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-black outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100"
                                     />
                                 </div>
-
                             </div>
-
                         </div>
 
                         <button
                             type="submit"
-                            className="mt-7 w-full rounded-xl bg-[#284B8F] py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1F3D78] focus:outline-none focus:ring-4 focus:ring-[#284B8F]/20 active:scale-[0.99]"
+                            className="mt-7 w-full rounded-xl bg-black py-3.5 text-sm font-bold text-yellow-400 shadow-sm transition-all duration-200 hover:bg-yellow-400 hover:text-black active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-yellow-200"
                         >
                             Create account
                         </button>
 
-                        <p className="mt-6 text-center text-sm text-[#667085]">
+                        <p className="mt-6 text-center text-sm text-slate-500">
                             Already have an account?{" "}
                             <Link
                                 to="/login"
-                                className="font-semibold text-[#8F3047] transition hover:text-[#72263A]"
+                                className="font-bold text-black transition hover:text-yellow-500"
                             >
                                 Sign in
                             </Link>
                         </p>
-                    </form>
+                    </div>
+                </form>
 
-                    <p className="mt-5 text-center text-xs text-[#98A2B3]">
-                        © 2026 MemberHub. All rights reserved.
-                    </p>
-
-                </div>
+                <p className="mt-5 text-center text-xs text-slate-400">
+                    © 2026 MemberHub. All rights reserved.
+                </p>
             </div>
         </div>
-    );
+    </div>
+);
+
 }

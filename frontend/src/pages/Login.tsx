@@ -4,75 +4,80 @@ import { loginUser } from "../api/auth.api";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function DynamicForm({}) {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [error, setError] = useState("");
 
-    const { login } = useAuth();
-    const navigate = useNavigate();
+const { login } = useAuth();
+const navigate = useNavigate();
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault();
-        setError("");
+async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
 
-        try {
-            const response = await loginUser(email, password);
+    try {
+        const response = await loginUser(email, password);
 
-            login(response.token, response.user);
+        login(response.token, response.user);
 
-            navigate("/");
-        } catch (err) {
-            setError(
-                err instanceof Error ? err.message : "Login failed"
-            );
-        }
+        navigate("/");
+    } catch (err) {
+        setError(
+            err instanceof Error ? err.message : "Login failed"
+        );
     }
+}
 
-    return (
-        <div className="min-h-screen bg-[#F5F6F8] px-4 py-12">
-            <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-md items-center">
-                <div className="w-full">
+return (
+    <div className="min-h-screen bg-[#f8f8f6] px-4 py-12 sm:px-6">
+        <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-md items-center">
+            <div className="w-full">
+                <div className="mb-8 text-center">
+                    <Link
+                        to="/"
+                        className="inline-flex items-center gap-2 text-2xl font-black tracking-tight text-black"
+                    >
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-400 text-sm font-black text-black shadow-sm">
+                            M
+                        </span>
 
-                    <div className="mb-8 text-center">
-                        <Link
-                            to="/"
-                            className="inline-flex items-center gap-2 text-2xl font-bold tracking-tight text-[#172033]"
-                        >
-                            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#172554] text-sm font-bold text-white shadow-sm">
-                                M
-                            </span>
+                        Member
+                        <span className="text-yellow-500">
+                            Hub
+                        </span>
+                    </Link>
 
-                            Member
-                            <span className="text-[#8F3047]">
-                                Hub
-                            </span>
-                        </Link>
-
-                        <h1 className="mt-8 text-3xl font-bold tracking-tight text-[#172033]">
-                            Welcome back
-                        </h1>
-
-                        <p className="mt-2 text-sm text-[#667085]">
-                            Sign in to manage your subscription
-                        </p>
+                    <div className="mt-7 inline-flex rounded-full bg-yellow-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-black">
+                        Welcome Back
                     </div>
 
-                    <form
-                        onSubmit={handleSubmit}
-                        className="rounded-2xl border border-[#E1E5EB] bg-white p-7 shadow-[0_8px_30px_rgba(23,32,51,0.06)] sm:p-8"
-                    >
+                    <h1 className="mt-4 text-3xl font-black tracking-tight text-black">
+                        Welcome back
+                    </h1>
+
+                    <p className="mt-2 text-sm text-slate-500">
+                        Sign in to manage your subscription
+                    </p>
+                </div>
+
+                <form
+                    onSubmit={handleSubmit}
+                    className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_10px_35px_rgba(0,0,0,0.06)]"
+                >
+                    <div className="h-1.5 w-full bg-yellow-400" />
+
+                    <div className="p-7 sm:p-8">
                         {error && (
-                            <div className="mb-6 rounded-xl border border-[#E8CDD4] bg-[#F4E7EA] px-4 py-3 text-sm text-[#8F3047]">
+                            <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
                                 {error}
                             </div>
                         )}
 
                         <div className="space-y-5">
-
                             <div>
                                 <label
                                     htmlFor="email"
-                                    className="mb-2 block text-sm font-medium text-[#344054]"
+                                    className="mb-2 block text-sm font-bold text-black"
                                 >
                                     Email address
                                 </label>
@@ -87,7 +92,7 @@ export default function DynamicForm({}) {
                                     }
                                     required
                                     autoComplete="email"
-                                    className="w-full rounded-xl border border-[#D5DAE1] bg-[#F8F9FB] px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98A2B3] hover:border-[#B8C0CC] focus:border-[#284B8F] focus:bg-white focus:ring-4 focus:ring-[#284B8F]/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-black outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100"
                                 />
                             </div>
 
@@ -95,14 +100,14 @@ export default function DynamicForm({}) {
                                 <div className="mb-2 flex items-center justify-between">
                                     <label
                                         htmlFor="password"
-                                        className="text-sm font-medium text-[#344054]"
+                                        className="text-sm font-bold text-black"
                                     >
                                         Password
                                     </label>
 
                                     <button
                                         type="button"
-                                        className="text-xs font-semibold text-[#284B8F] transition hover:text-[#1F3D78]"
+                                        className="text-xs font-bold text-slate-500 transition hover:text-black"
                                     >
                                         Forgot password?
                                     </button>
@@ -118,36 +123,37 @@ export default function DynamicForm({}) {
                                     }
                                     required
                                     autoComplete="current-password"
-                                    className="w-full rounded-xl border border-[#D5DAE1] bg-[#F8F9FB] px-4 py-3 text-sm text-[#172033] outline-none transition placeholder:text-[#98A2B3] hover:border-[#B8C0CC] focus:border-[#284B8F] focus:bg-white focus:ring-4 focus:ring-[#284B8F]/10"
+                                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-black outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-yellow-400 focus:bg-white focus:ring-4 focus:ring-yellow-100"
                                 />
                             </div>
-
                         </div>
 
                         <button
                             type="submit"
-                            className="mt-7 w-full rounded-xl bg-[#284B8F] py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1F3D78] focus:outline-none focus:ring-4 focus:ring-[#284B8F]/20 active:scale-[0.99]"
+                            className="mt-7 w-full rounded-xl bg-black py-3.5 text-sm font-bold text-yellow-400 shadow-sm transition-all duration-200 hover:bg-yellow-400 hover:text-black active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-yellow-200"
                         >
                             Sign in
                         </button>
 
-                        <p className="mt-6 text-center text-sm text-[#667085]">
+                        <p className="mt-6 text-center text-sm text-slate-500">
                             Don't have an account?{" "}
                             <Link
                                 to="/register"
-                                className="font-semibold text-[#8F3047] transition hover:text-[#72263A]"
+                                className="font-bold text-black transition hover:text-yellow-500"
                             >
                                 Create an account
                             </Link>
                         </p>
-                    </form>
+                    </div>
+                </form>
 
-                    <p className="mt-6 text-center text-xs text-[#98A2B3]">
-                        © 2026 MemberHub. All rights reserved.
-                    </p>
-
-                </div>
+                <p className="mt-6 text-center text-xs text-slate-400">
+                    © 2026 MemberHub. All rights reserved.
+                </p>
             </div>
         </div>
-    );
+    </div>
+);
+
+
 }

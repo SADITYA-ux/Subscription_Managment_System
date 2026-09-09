@@ -13,6 +13,9 @@ import AdminSubscriptions from "./pages/admin/AdminSubscription";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminStaff from "./pages/admin/AdminStaff";
 import Plans from "./pages/Plans";
+import RedirectLoggedIn from "./components/RedirectLoggedIn";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 export default function App()
 {
@@ -30,8 +33,13 @@ export default function App()
         <Routes>
             <Route path ="/" element = {<Home/>} />
             <Route path ="/plans" element = {<Plans/>} />
-            <Route path= "/login" element = {<Login/>} />
-            <Route path = "/register" element = {<SignIn/>}/>
+            <Route path = "/aboutUs" element = { <About/>}/>
+            <Route path = "/contact" element = { <Contact/>}/>
+
+            <Route element = {  <RedirectLoggedIn/> } >
+              <Route path= "/login" element = {<Login/>} />
+              <Route path = "/register" element = {<SignIn/>}/>
+            </Route>
 
             <Route element = { <RoleRoute allowedRoles={["Admin"]} />} >
               <Route element = {<AdminLayout/>}>

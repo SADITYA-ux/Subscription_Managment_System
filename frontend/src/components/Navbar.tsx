@@ -45,13 +45,22 @@ export default function Navbar() {
                     </Link>
                     {user && (
                         <Link
-                            to="/subscriptions"
+                            to="/aboutUs"
                             className="rounded-lg border border-transparent px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-yellow-200 hover:bg-yellow-50 hover:text-black"
                         >
-                            My Subscription
+                            About Us
                         </Link>
                     )}
+                    <Link
+                        to="/contact"
+                        className="rounded-lg border border-transparent px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-yellow-200 hover:bg-yellow-50 hover:text-black"
+                    >
+                        Contact Us
+                    </Link>
+
                 </div>
+
+                
 
                 <div ref={profileRef} className="relative">
                     {user ? (
