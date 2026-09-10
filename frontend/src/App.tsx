@@ -18,6 +18,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import MySubscription from "./pages/client/MySubscriptions";
 import Checkout from "./pages/Checkout";
+import MyPayments from "./pages/client/MyPayments";
 
 export default function App()
 {
@@ -63,7 +64,8 @@ export default function App()
             
             <Route element = { <RoleRoute allowedRoles={["Client"]} />}>
               <Route element = {<ClientLayout/>}>
-                  <Route path="/my/subscription" element={<MySubscription />} />
+                  <Route path="/my/subscription" element={<MySubscription/>} />
+                  <Route path="/my/payments" element={<MyPayments />} />
               </Route>
                <Route path="/checkout/:planId" element={<Checkout />} />
             </Route>

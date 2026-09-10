@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import { fromPromise } from "neverthrow";
 import { db } from "../db/index.js";
-import { payment, subscription } from "../db/schema.js";
-import { eq } from "drizzle-orm";
+import { client, payment, subscription } from "../db/schema.js";
+import { eq, inArray } from "drizzle-orm";
 import { StatusCode } from "../Constraints/status-codes.js";
 
 export const createPayment = async (req: Request, res: Response) => {
@@ -167,4 +167,49 @@ export const updatePayment = async (req: Request, res: Response) => {
     return res
         .status(StatusCode.OK)
         .json({ message: "Payment updated successfully", data: data.value[0] });
+};
+
+export const getMyPayments = async (req: Request, res: Response) => {
+    const userId = (req as any).user.id;
+
+    const clientResult = await fromPromise(
+        db.select().from(client).where(eq(client.userid, userId)).limit(1),
+        () => new Error("Database Error")
+    );
+
+    if (clientResult.isErr()) {
+        return res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ message: clientResult.error.message });
+    }
+
+    const [foundClient] = clientResult.value;
+
+    if (!foundClient) {
+        return res.status(StatusCode.NOT_FOUND).json({ message: "Client profile not found" });
+    }
+
+    const subsResult = await fromPromise(
+        db.select({ id: subscription.id }).from(subscription).where(eq(subscription.clientid, foundClient.id)),
+        () => new Error("Database Error")
+    );
+
+    if (subsResult.isErr()) {
+        return res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ message: subsResult.error.message });
+    }
+
+    const subIds = subsResult.value.map((s) => s.id);
+
+    if (subIds.length === 0) {
+        return res.status(StatusCode.OK).json({ message: "No payments found", data: [] });
+    }
+
+    const data = await fromPromise(
+        db.select().from(payment).where(inArray(payment.subid, subIds)),
+        () => new Error("Database Error")
+    );
+
+    if (data.isErr()) {
+        return res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ message: data.error.message });
+    }
+
+    return res.status(StatusCode.OK).json({ message: "Your payments", data: data.value });
 };

@@ -4,13 +4,13 @@ import { createSubs, deleteSubs, editSubs, extendSubs, getAllSubs, getMySubs, ge
 
 export const subscriptionRouter : Router = Router();
 
-subscriptionRouter.post("/", authenticate , authorize(["Admin","Staff"]) , createSubs);
-subscriptionRouter.get("/" , authenticate ,authorize(["Admin","Staff"]) , getAllSubs);
+subscriptionRouter.post("/", authenticate, authorize(["Admin", "Staff"]), createSubs);
+subscriptionRouter.get("/", authenticate, authorize(["Admin", "Staff"]), getAllSubs);
 subscriptionRouter.get("/inactive", authenticate, authorize(["Admin"]), inactiveSubs);
-subscriptionRouter.get("/:id" , authenticate , authorize(["Admin","Staff"]) , getSubsById);
-subscriptionRouter.put("/:id", authenticate , authorize(["Admin","Staff"]) , updateSubs);
-subscriptionRouter.get("/client/:id",authenticate, getSubsByClient);
-subscriptionRouter.delete("/:id" , authenticate , authorize(["Admin"]) , deleteSubs);
+subscriptionRouter.get("/mine", authenticate, authorize(["Client"]), getMySubs);
+subscriptionRouter.get("/client/:id", authenticate, getSubsByClient);
+subscriptionRouter.get("/:id", authenticate, authorize(["Admin", "Staff"]), getSubsById);
+subscriptionRouter.put("/:id", authenticate, authorize(["Admin", "Staff"]), updateSubs);
+subscriptionRouter.delete("/:id", authenticate, authorize(["Admin"]), deleteSubs);
 subscriptionRouter.put("/:id/extend", authenticate, authorize(["Admin", "Staff"]), extendSubs);
 subscriptionRouter.put("/:id/restore", authenticate, authorize(["Admin"]), restoreSubs);
-subscriptionRouter.get("/mine", authenticate, authorize(["Client"]), getMySubs);

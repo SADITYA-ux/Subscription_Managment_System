@@ -19,3 +19,7 @@ export function getPaymentsBySubscription(subId: number) {
 export function updatePayment(id: number, data: { status?: string; amount?: string; portal?: string; accountno?: string }) {
     return apiRequest(`/payments/${id}`, "PUT", data);
 }
+
+export function getMyPayments() {
+    return apiRequest("/payments/mine", "GET");
+}

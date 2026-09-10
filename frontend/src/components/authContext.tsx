@@ -22,6 +22,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         async function restoreSession() {
+            console.log("AuthContext: restoreSession running");
             const token = localStorage.getItem("token");
 
             if (!token) {

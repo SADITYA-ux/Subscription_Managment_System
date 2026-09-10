@@ -1,12 +1,10 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../Sidebar";
 
-const clientLinks = 
-[
-    { to : "/my/subscription" , label : "My Subscriptions" , icon : "S"},
-    { to : "/my/plans" , label : "My Payments" , icon : "p"}
-]
-
+const clientLinks = [
+    { to: "/my/subscription", label: "My Subscriptions", icon: "S" },
+    { to: "/my/payments", label: "My Payments", icon: "P" },
+];
 export default function ClientLayout() {
     return (
         <div className="flex flex-1">

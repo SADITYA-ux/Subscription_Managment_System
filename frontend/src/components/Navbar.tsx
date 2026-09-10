@@ -60,8 +60,6 @@ export default function Navbar() {
 
                 </div>
 
-                
-
                 <div ref={profileRef} className="relative">
                     {user ? (
                         <button

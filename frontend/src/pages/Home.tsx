@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllPlans } from "../api/plan.api";
+import { useNavigate } from "react-router-dom";
 
 type Plan = 
 {
@@ -12,6 +13,7 @@ type Plan =
 export default function Home()
 {
 const [plans , setPlans] = useState<Plan[]>([]);
+const navigate = useNavigate();
 
 useEffect(() => {
     async function fetchPlan() {
@@ -53,11 +55,15 @@ return (
                     </p>
 
                     <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                        <button className="rounded-full bg-black px-8 py-4 text-sm font-semibold text-white shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-black/90">
+                        <button 
+                        onClick=  {() => navigate(`/plans`)}
+                        className="rounded-full bg-black px-8 py-4 text-sm font-semibold text-white shadow-xl shadow-black/20 transition hover:-translate-y-0.5 hover:bg-black/90">
                             Explore plans
                         </button>
 
-                        <button className="rounded-full border border-black/10 bg-white px-8 py-4 text-sm font-semibold text-black shadow-sm transition hover:-translate-y-0.5 hover:bg-black hover:text-white">
+                        <button 
+                        onClick=  {() => navigate(`/aboutUs`)}
+                        className="rounded-full border border-black/10 bg-white px-8 py-4 text-sm font-semibold text-black shadow-sm transition hover:-translate-y-0.5 hover:bg-black hover:text-white">
                             Learn more
                         </button>
                     </div>
@@ -81,7 +87,9 @@ return (
                             </svg>
                         </div>
 
-                        <h3 className="text-lg font-semibold text-black">
+                        <h3 
+                        onClick=  {() => navigate(`/plans`)}
+                        className="text-lg font-semibold text-black">
                             Browse plans
                         </h3>
 
@@ -108,7 +116,9 @@ return (
                             </svg>
                         </div>
 
-                        <h3 className="text-lg font-semibold text-black">
+                        <h3 
+                        onClick = { () => navigate(`/my/subscription`)}
+                        className="text-lg font-semibold text-black">
                             Track your status
                         </h3>
 
@@ -135,7 +145,9 @@ return (
                             </svg>
                         </div>
 
-                        <h3 className="text-lg font-semibold text-black">
+                        <h3 
+                        onClick =  { () => navigate(`/my/payments`)}
+                        className="text-lg font-semibold text-black">
                             Manage payments
                         </h3>
 
@@ -166,7 +178,9 @@ return (
                         </p>
                     </div>
 
-                    <button className="w-fit text-sm font-semibold text-black transition hover:text-yellow-600">
+                    <button 
+                    onClick = { () => navigate(`/plans`)}
+                    className="w-fit text-sm font-semibold text-black transition hover:text-yellow-600">
                         View all plans →
                     </button>
                 </div>
@@ -175,6 +189,7 @@ return (
                     {plans.map((plan, index) => (
                         <div
                             key={plan.id}
+                             onClick={() => navigate(`/checkout/${plan.id}`)}
                             className={`relative overflow-hidden rounded-2xl border bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-xl ${
                                 index === 1
                                     ? "border-yellow-300 shadow-lg shadow-yellow-100"

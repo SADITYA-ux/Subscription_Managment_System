@@ -3,6 +3,7 @@ import { authenticate, authorize } from "../middleware/auth.middleware.js";
 import {
     createPayment,
     getAllPayments,
+    getMyPayments,
     getPaymentById,
     getPaymentsBySubscription,
     updatePayment
@@ -13,5 +14,6 @@ export const paymentRouter: Router = Router();
 paymentRouter.post("/", authenticate, authorize(["Admin", "Staff"]), createPayment);
 paymentRouter.get("/", authenticate, authorize(["Admin", "Staff"]), getAllPayments);
 paymentRouter.get("/subscription/:subId", authenticate, authorize(["Admin", "Staff"]), getPaymentsBySubscription);
+paymentRouter.get("/mine", authenticate, authorize(["Client"]), getMyPayments);
 paymentRouter.get("/:id", authenticate, authorize(["Admin", "Staff"]), getPaymentById);
 paymentRouter.put("/:id", authenticate, authorize(["Admin", "Staff"]), updatePayment);
