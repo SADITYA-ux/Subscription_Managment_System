@@ -56,7 +56,7 @@ export const payment = pgTable("payment" , {
     amount : decimal("price" , {precision: 10 , scale : 5}).notNull(),
     paymentdate : timestamp("payment_date").notNull().defaultNow(),
     portal : varchar("portal").notNull(),
-    accountno : varchar("account_no" , {length : 150}).notNull(),
+    accountno : varchar("account_no" , {length : 150}),
     status: paymentStatus("status").notNull().default("Paid"),
     isActive: boolean("is_active").notNull().default(true)
 });

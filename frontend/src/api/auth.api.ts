@@ -16,3 +16,6 @@ export function registerUser( data : {
 {
     return apiRequest("/auth/register" , "POST" , data);
 }
+export function getMe() {
+    return apiRequest("/auth/me", "GET");
+}

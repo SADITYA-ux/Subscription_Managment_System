@@ -10,7 +10,8 @@ export const createPayment = async (req: Request, res: Response) => {
 
     const subResult = await fromPromise(
         db.select().from(subscription).where(eq(subscription.id, subid)).limit(1),
-        () => new Error("Database Error")
+        (err) =>  new Error("Database Error")
+
     );
 
     if (subResult.isErr()) {
@@ -37,7 +38,10 @@ export const createPayment = async (req: Request, res: Response) => {
                 status: status ?? "Paid"
             })
             .returning(),
-        () => new Error("Database Error")
+        (err) => {
+            console.log("PAYMENT INSERT ERROR:", err);
+            return new Error("Database Error")
+        }
     );
 
     if (data.isErr()) {
@@ -61,12 +65,6 @@ export const getAllPayments = async (req: Request, res: Response) => {
         return res
             .status(StatusCode.INTERNAL_SERVER_ERROR)
             .json({ message: data.error.message });
-    }
-
-    if (data.value.length === 0) {
-        return res
-            .status(StatusCode.NOT_FOUND)
-            .json({ message: "No payments found" });
     }
 
     return res

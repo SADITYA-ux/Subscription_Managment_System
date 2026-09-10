@@ -119,6 +119,17 @@ export default function Navbar() {
                                 </Link>
                             )}
 
+                            {user.role === "Client" && (
+                                <Link
+                                    to="/my/subscription"
+                                    onClick={() => setOpen(false)}
+                                    className="flex items-center gap-2 px-5 py-3 text-sm font-medium text-slate-700 transition hover:bg-yellow-50 hover:text-black"
+                                >
+                                    <span>👨🏻‍💼</span>
+                                    Client Panel
+                                </Link>
+                            )}
+
                             <div className="h-px bg-yellow-100" />
 
                             <button

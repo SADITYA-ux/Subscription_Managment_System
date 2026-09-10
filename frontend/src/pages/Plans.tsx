@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllPlans } from "../api/plan.api";
+import { useNavigate } from "react-router-dom";
 
 type Plan = {
 id: number;
@@ -11,6 +12,7 @@ price: string;
 export default function Plans() {
 const [plans, setPlans] = useState<Plan[]>([]);
 const [loading, setLoading] = useState(true);
+const navigate = useNavigate();
 
 useEffect(() => {
     async function fetchPlans() {
@@ -118,6 +120,13 @@ return (
                                         </span>
                                     </div>
                                 </div>
+
+                                <button
+                                    onClick={() => navigate(`/checkout/${plan.id}`)}
+                                    className="mt-6 w-full rounded-xl bg-yellow-400 px-4 py-3 text-sm font-bold text-black shadow-sm shadow-yellow-300/50 transition hover:bg-yellow-500"
+                                >
+                                    Choose this plan
+                                </button>
                             </div>
                         </div>
                     ))}

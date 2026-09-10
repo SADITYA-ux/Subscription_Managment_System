@@ -12,6 +12,6 @@ export const paymentRouter: Router = Router();
 
 paymentRouter.post("/", authenticate, authorize(["Admin", "Staff"]), createPayment);
 paymentRouter.get("/", authenticate, authorize(["Admin", "Staff"]), getAllPayments);
-paymentRouter.get("/:id", authenticate, authorize(["Admin", "Staff"]), getPaymentById);
 paymentRouter.get("/subscription/:subId", authenticate, authorize(["Admin", "Staff"]), getPaymentsBySubscription);
+paymentRouter.get("/:id", authenticate, authorize(["Admin", "Staff"]), getPaymentById);
 paymentRouter.put("/:id", authenticate, authorize(["Admin", "Staff"]), updatePayment);

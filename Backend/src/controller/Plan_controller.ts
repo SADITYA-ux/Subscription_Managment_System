@@ -6,6 +6,18 @@ import { StatusCode } from "../Constraints/status-codes.js";
 import { eq } from "drizzle-orm";
 
 
+const formatPlan = (p: typeof plan.$inferSelect) => ({
+    ...p,
+    price: Number(p.price),
+});
+
+const formatPlans = (plans: (typeof plan.$inferSelect)[]) =>
+    plans.map((p) => ({
+        ...p,
+        price: Number(p.price),
+    }));
+
+
 export const getPlan = async( req : Request , res : Response ) =>
 {
     const data = await fromPromise
@@ -26,7 +38,7 @@ export const getPlan = async( req : Request , res : Response ) =>
 
     return res
         .status(StatusCode.OK)
-        .json({ message : "Got all Plans" , data : data.value })
+        .json({ message : "Got all Plans" , data : formatPlans(data.value) })
 };
 
 export const getPlanById = async ( req : Request , res : Response ) =>
@@ -58,9 +70,15 @@ export const getPlanById = async ( req : Request , res : Response ) =>
 
     const foundPlan = data.value[0];
 
+    if (!foundPlan) {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message : "Plan Not FOund at all" });
+    }
+
     return res
         .status(StatusCode.OK)
-        .json({ message : "Plan FOund " , data : foundPlan})
+        .json({ message : "Plan FOund " , data : formatPlan(foundPlan)})
 };
 
 export const createPlan = async (req : Request , res : Response ) =>
@@ -162,7 +180,7 @@ export const updatePlan = async ( req : Request , res : Response ) =>
 
     return res
         .status(StatusCode.OK)
-        .json({ message : "Updated Plan Successfully" , data : data.value })
+        .json({ message : "Updated Plan Successfully" , data : formatPlans(data.value) })
 }
 
 export const getInactivePlans = async (req: Request, res: Response) => {
@@ -179,7 +197,7 @@ export const getInactivePlans = async (req: Request, res: Response) => {
 
     return res
         .status(StatusCode.OK)
-        .json({ message: "Inactive plans found", data: data.value });
+        .json({ message: "Inactive plans found", data: formatPlans(data.value) });
 };
 
 export const restorePlan = async (req: Request, res: Response) => {
@@ -208,7 +226,15 @@ export const restorePlan = async (req: Request, res: Response) => {
             .json({ message: "No plan found" });
     }
 
+    const restoredPlan = data.value[0];
+
+    if (!restoredPlan) {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message: "No plan found" });
+    }
+
     return res
         .status(StatusCode.OK)
-        .json({ message: "Plan restored successfully", data: data.value[0] });
+        .json({ message: "Plan restored successfully", data: formatPlan(restoredPlan) });
 };

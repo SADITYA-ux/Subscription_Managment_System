@@ -39,3 +39,7 @@ export function getInactiveSubscriptions() {
 export function restoreSubscription(id: number) {
     return apiRequest(`/subscriptions/${id}/restore`, "PUT");
 }
+
+export function getMySubscriptions() {
+    return apiRequest("/subscriptions/mine", "GET");
+}

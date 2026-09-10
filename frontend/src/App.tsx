@@ -16,11 +16,13 @@ import Plans from "./pages/Plans";
 import RedirectLoggedIn from "./components/RedirectLoggedIn";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import MySubscription from "./pages/client/MySubscriptions";
+import Checkout from "./pages/Checkout";
 
 export default function App()
 {
   const location = useLocation();
-  
+
   const NoIncludes = [
     "/login"
   ]
@@ -57,12 +59,13 @@ export default function App()
                       <Route path="/staff/subscriptions" element={<AdminSubscriptions />} />
                       <Route path="/staff/payments" element={<AdminPayments />} />
                   </Route>
-              </Route>
-
-            <Route element = { <RoleRoute allowedRoles = {["Client"]} />} >
+            </Route>
+            
+            <Route element = { <RoleRoute allowedRoles={["Client"]} />}>
               <Route element = {<ClientLayout/>}>
-                
+                  <Route path="/my/subscription" element={<MySubscription />} />
               </Route>
+               <Route path="/checkout/:planId" element={<Checkout />} />
             </Route>
 
         </Routes>

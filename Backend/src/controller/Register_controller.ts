@@ -88,3 +88,33 @@ export const createUser = async ( req : Request , res : Response ) =>
         .status(StatusCode.CREATED)
         .json({ message : "User Registred Successfully" , data : transactionResult.value });
 }
+
+export const getMe = async (req: Request, res: Response) => {
+    const userId = (req as any).user.id;
+
+    const result = await fromPromise(
+        db.select({ id: users.id, email: users.email, role: users.role })
+            .from(users)
+            .where(eq(users.id, userId))
+            .limit(1),
+        () => new Error("Database Error")
+    );
+
+    if (result.isErr()) {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message: result.error.message });
+    }
+
+    const [foundUser] = result.value;
+
+    if (!foundUser) {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message: "User not found" });
+    }
+
+    return res
+        .status(StatusCode.OK)
+        .json({ user: foundUser });
+};

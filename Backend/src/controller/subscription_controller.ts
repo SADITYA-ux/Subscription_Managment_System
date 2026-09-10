@@ -1,7 +1,7 @@
 import type { Request , Response } from "express";
 import { Err, fromPromise } from "neverthrow";
 import { db } from "../db/index.js";
-import { plan, subscription } from "../db/schema.js";
+import { client, plan, subscription } from "../db/schema.js";
 import { StatusCode } from "../Constraints/status-codes.js";
 import { eq } from "drizzle-orm";
 import { format } from "path";
@@ -453,4 +453,34 @@ export const extendSubs = async (req: Request, res: Response) => {
     return res
         .status(StatusCode.OK)
         .json({ message: "Subscription extended successfully", data: data.value[0] });
+};
+
+export const getMySubs = async (req: Request, res: Response) => {
+    const userId = (req as any).user.id;
+
+    const clientResult = await fromPromise(
+        db.select().from(client).where(eq(client.userid, userId)).limit(1),
+        () => new Error("Database Error")
+    );
+
+    if (clientResult.isErr()) {
+        return res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ message: clientResult.error.message });
+    }
+
+    const [foundClient] = clientResult.value;
+
+    if (!foundClient) {
+        return res.status(StatusCode.NOT_FOUND).json({ message: "Client profile not found" });
+    }
+
+    const data = await fromPromise(
+        db.select().from(subscription).where(eq(subscription.clientid, foundClient.id)),
+        () => new Error("Database Error")
+    );
+
+    if (data.isErr()) {
+        return res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ message: data.error.message });
+    }
+
+    return res.status(StatusCode.OK).json({ message: "Your subscriptions", data: data.value.map(computeStatus) });
 };

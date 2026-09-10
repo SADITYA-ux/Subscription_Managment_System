@@ -149,3 +149,45 @@ export const deactivateStaff = async (req: Request, res: Response) => {
         .status(StatusCode.OK)
         .json({ message: "Staff deactivated successfully", data: data.value[0] });
 };
+
+export const updateStaff = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    const { name, address, phone, age } = req.body;
+
+    if (Number.isNaN(id)) {
+        return res
+            .status(StatusCode.BAD_REQUEST)
+            .json({ message: "Invalid id" });
+    }
+
+    const ageNum = Number(age);
+    if (isNaN(ageNum) || ageNum <= 0) {
+        return res
+            .status(StatusCode.BAD_REQUEST)
+            .json({ message: "Invalid age" });
+    }
+
+    const data = await fromPromise(
+        db.update(staff)
+            .set({ name, address, phone, age: ageNum })
+            .where(eq(staff.id, id))
+            .returning(),
+        () => new Error("Database Error")
+    );
+
+    if (data.isErr()) {
+        return res
+            .status(StatusCode.INTERNAL_SERVER_ERROR)
+            .json({ message: data.error.message });
+    }
+
+    if (data.value.length === 0) {
+        return res
+            .status(StatusCode.NOT_FOUND)
+            .json({ message: "No staff found" });
+    }
+
+    return res
+        .status(StatusCode.OK)
+        .json({ message: "Staff updated successfully", data: data.value[0] });
+};
